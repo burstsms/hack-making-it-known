@@ -153,13 +153,13 @@ func ValidateSignature(r *http.Request) bool {
 func SendToCloudTopic(w http.ResponseWriter, r *http.Request) {
 	// Set up the Google Cloud Pub/Sub client
 	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, "your-project-id")
+	client, err := pubsub.NewClient(ctx, "transmit-non-prod")
 	if err != nil {
 		log.Fatalf("Failed to create Pub/Sub client: %v", err)
 	}
 
 	// topic name
-	topicName := "projects/transmit-non-prod/topics/hack-slack-bridge"
+	topicName := "hack-slack-bridge"
 
 	// Get a reference to the topic
 	topic := client.Topic(topicName)
