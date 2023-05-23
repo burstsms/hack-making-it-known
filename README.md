@@ -10,7 +10,8 @@ When deployed to cloud function the Handler method is the entry point.
 
 ## Environment Variables
 The following environment variables are required to run the bot locally or in cloud function.
-"OPENAI_API_KEY": the OpenAI API key
+- OPENAI_API_KEY: the OpenAI API key
+- SLACK_SIGNING_SECRET: the signing key we get for the MIK Slack app
 
 ## Deployment
 
