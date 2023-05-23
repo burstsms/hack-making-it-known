@@ -1,4 +1,4 @@
-module mik
+module github.com/burstsms/hack-making-it-known
 
 go 1.19
 
