@@ -11,7 +11,7 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"mik/openai"
+	"github.com/burstsms/hack-making-it-known/openai"
 )
 
 var client openai.OaiClient
