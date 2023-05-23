@@ -11,6 +11,7 @@ import (
 	"os"
 
 	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
+	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/slack-go/slack"
@@ -36,6 +37,8 @@ var slackClient SlackClient
 
 func init() {
 	log.Println("init")
+	functions.HTTP("MakeItKnown", Handler)
+
 	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 	slackClient = slack.New(os.Getenv("SLACK_BOT_TOKEN"))
 	functions.HTTP("MakeItKnown", Handler)
