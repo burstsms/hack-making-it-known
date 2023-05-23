@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
+
 	"cloud.google.com/go/pubsub"
 	"github.com/slack-go/slack"
 	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
