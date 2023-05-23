@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"mik"
+	mik "github.com/burstsms/hack-making-it-known"
 )
 
 func main() {
