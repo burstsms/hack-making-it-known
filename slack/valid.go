@@ -2,7 +2,6 @@ package slack
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,10 +9,10 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func HandleURLValidation(w http.ResponseWriter, r *http.Request) bool {
-	if r.Method == http.MethodPost {
+func HandleURLValidation(w http.ResponseWriter, method string, body []byte) bool {
+	if method == http.MethodPost {
 		var urlVerification map[string]interface{}
-		err := json.NewDecoder(r.Body).Decode(&urlVerification)
+		err := json.Unmarshal(body, &urlVerification)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return true
@@ -33,21 +32,20 @@ func HandleURLValidation(w http.ResponseWriter, r *http.Request) bool {
 
 // ValidateSignature validate the signature value as a HMAC signature
 // https://api.slack.com/authentication/verifying-requests-from-slack#about
-func ValidateSignature(r *http.Request) bool {
+func ValidateSignature(header http.Header, body []byte) bool {
 	signingSecret := os.Getenv("SLACK_SIGNING_SECRET")
+	if signingSecret == "" {
+		log.Println("SLACK_SIGNING_SECRET is not set")
+		return true
+	}
 	// if the timestamp is more than five minutes from local time, reject the request
 	// https://api.slack.com/authentication/verifying-requests-from-slack#additional_verification_steps
-	verifier, err := slack.NewSecretsVerifier(r.Header, signingSecret)
+	verifier, err := slack.NewSecretsVerifier(header, signingSecret)
 	if err != nil {
 		log.Printf("slack.NewSecretsVerifier: %v", err)
 		return false
 	}
-	b, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Printf("io.ReadAll: %v", err)
-		return false
-	}
-	_, err = verifier.Write(b)
+	_, err = verifier.Write(body)
 	if err != nil {
 		log.Printf("verifier.Write: %v", err)
 		return false

@@ -10,6 +10,7 @@ import (
 	"os"
 
 	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
+	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 
 	"github.com/burstsms/hack-making-it-known/openai"
 	"github.com/burstsms/hack-making-it-known/slack"
@@ -30,6 +31,8 @@ var slackClient SlackClient
 
 func init() {
 	log.Println("init")
+	functions.HTTP("MakeItKnown", Handler)
+
 	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 	slackClient = slack.New(os.Getenv("SLACK_BOT_TOKEN"))
 }
@@ -37,21 +40,25 @@ func init() {
 // Handler sends the received message to OpenAI and returns the response.
 func Handler(w http.ResponseWriter, r *http.Request) {
 
+	// request body needs to be a byte array
+	// so we can use it in multiple places
+	body, err := io.ReadAll(r.Body)
+
 	// is this a URL verification request?
 	// returns true if it is and we finish here
-	if slack.HandleURLValidation(w, r) {
+	if slack.HandleURLValidation(w, r.Method, body) {
 		return
 	}
 
 	// validate the Slack app HMAC signature
-	if !slack.ValidateSignature(r) {
+	if !slack.ValidateSignature(r.Header, body) {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
 	// parse the Slack message event
 	var event types.SlackMessageEvent
-	err := json.NewDecoder(r.Body).Decode(&event)
+	err = json.Unmarshal(body, &event)
 	if err != nil {
 		if err == io.EOF {
 			log.Println("EOF")
