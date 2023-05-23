@@ -8,9 +8,10 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
-// HelloWorld prints the JSON encoded "message" field in the body
+// Handler prints the JSON encoded "message" field in the body
 // of the request or "Hello, World!" if there isn't one.
 func Handler(w http.ResponseWriter, r *http.Request) {
 	var d struct {
@@ -21,6 +22,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case io.EOF:
 			fmt.Fprint(w, "Hello World!")
+			fmt.Fprint(w, "FOO: %q", os.Getenv("SLACK_TOKEN"))
+			fmt.Fprint(w, "FOO: %q", os.Getenv("OPENAI_API_KEY"))
 			return
 		default:
 			log.Printf("json.NewDecoder: %v", err)
