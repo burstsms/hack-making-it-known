@@ -34,6 +34,8 @@ var slackClient SlackClient
 
 func init() {
 	log.Println("init")
+	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
+	slackClient = slack.New(os.Getenv("SLACK_BOT_TOKEN"))
 	functions.HTTP("MakeItKnown", Handler)
 
 	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))

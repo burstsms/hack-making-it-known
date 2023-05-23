@@ -2,20 +2,20 @@ package main
 
 import (
 	"log"
-	"os"
+	"net/http"
 
-	"github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
-
-	_ "github.com/burstsms/hack-making-it-known"
+	"github.com/burstsms/hack-making-it-known"
 )
 
 func main() {
-	// Use PORT environment variable, or default to 8080.
-	port := "8080"
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", mik.Handler)
+
+	log.Print("Listening...")
+	err := http.ListenAndServe(":3000", mux)
+	if err != nil {
+		return
 	}
-	if err := funcframework.Start(port); err != nil {
-		log.Fatalf("funcframework.Start: %v\n", err)
-	}
+
 }
