@@ -3,8 +3,20 @@ module github.com/burstsms/hack-making-it-known
 go 1.19
 
 require (
+	github.com/GoogleCloudPlatform/functions-framework-go v1.7.3
 	github.com/sashabaranov/go-openai v1.9.4
 	github.com/slack-go/slack v0.12.2
 )
 
-require github.com/gorilla/websocket v1.4.2 // indirect
+require (
+	cloud.google.com/go/functions v1.13.0 // indirect
+	github.com/cloudevents/sdk-go/v2 v2.14.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
+	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
+	go.uber.org/atomic v1.4.0 // indirect
+	go.uber.org/multierr v1.1.0 // indirect
+	go.uber.org/zap v1.10.0 // indirect
+)

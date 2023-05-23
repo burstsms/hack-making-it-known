@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
+
 	"github.com/burstsms/hack-making-it-known/openai"
 	"github.com/burstsms/hack-making-it-known/slack"
 	"github.com/burstsms/hack-making-it-known/types"
