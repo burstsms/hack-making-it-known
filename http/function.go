@@ -43,6 +43,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("body: ", string(body))
+
 	// is this a URL verification request?
 	// returns true if it is and we finish here
 	if slack.HandleURLValidation(w, r.Method, body) {
