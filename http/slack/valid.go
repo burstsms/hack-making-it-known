@@ -24,6 +24,7 @@ func HandleURLValidation(w http.ResponseWriter, method string, body []byte) bool
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return true
 			}
+			log.Println("URL verification successful")
 			return true
 		}
 	}
@@ -55,5 +56,6 @@ func ValidateSignature(header http.Header, body []byte) bool {
 		log.Printf("verifier.Ensure: %v", err)
 		return false
 	}
+	log.Println("Signature validation successful")
 	return true
 }

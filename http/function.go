@@ -60,14 +60,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Println(err.Error())
 		return
 	}
+	log.Printf("received: %+v", event)
 
 	// ignore events that are not message events
 	if event.Type != "event_callback" || event.Event.Type != "message" {
 		log.Printf("ignoring event type: %s", event.Type)
 		return
 	}
+	log.Println("is a valid message event")
 
 	// we pass off the message to OpenAI
 	err = AskOpenAI(ctx, event)
