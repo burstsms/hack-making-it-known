@@ -2,6 +2,7 @@ package types
 
 type CompletionRequest struct {
 	Message string
+	Model   string
 }
 type CompletionResponse struct {
 	Message string

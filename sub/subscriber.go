@@ -21,9 +21,11 @@ type OaiClient interface {
 }
 
 var oaiClient OaiClient
+var modelEnv string
 
 func init() {
 	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
+	modelEnv = os.Getenv("OPENAI_MODEL")
 	functions.CloudEvent("HelloPubSub", handler)
 }
 
@@ -59,7 +61,11 @@ func handler(ctx context.Context, e event.Event) error {
 
 func askOpenAI(event types.SlackMessageEvent) {
 	log.Printf("message: %s", event.Event.Text)
-	completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text})
+	model := "gpt-4"
+	if modelEnv != "" {
+		model = modelEnv
+	}
+	completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text, Model: model})
 	if err != nil {
 		log.Printf("error calling OpenAI API: %s", err.Error())
 		return
