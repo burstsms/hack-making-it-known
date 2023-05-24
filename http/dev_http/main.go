@@ -9,6 +9,7 @@ import (
 	_ "github.com/burstsms/hack-making-it-known"
 )
 
+// starts the
 func main() {
 	// Use PORT environment variable, or default to 8080.
 	port := "8080"

@@ -23,7 +23,8 @@ func New(botToken string) *Client {
 }
 
 func (s Client) PostCompletionMessage(event types.SlackMessageEvent, message string) error {
-	_, _, err := slackAPI.PostMessage(event.Event.Channel,
+	_, _, err := slackAPI.PostMessage(
+		event.Event.Channel,
 		slack.MsgOptionText(message, false),
 		slack.MsgOptionTS(event.Event.Ts),
 	)
