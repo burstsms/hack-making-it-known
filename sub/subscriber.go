@@ -62,7 +62,7 @@ func handler(ctx context.Context, e event.Event) error {
 
 func askOpenAI(event types.SlackMessageEvent) {
 	log.Printf("message: %s", event.Event.Text)
-	completion, err := oaiClient.CreateChatCompletion(context.Background(), &openai.CompletionRequest{Message: event.Event.Text})
+	completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text})
 	if err != nil {
 		log.Printf("error calling OpenAI API: %s", err.Error())
 		return
