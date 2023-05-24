@@ -19,20 +19,16 @@ func NewClient(apiKey string) *Client {
 }
 
 func (c Client) CreateChatCompletion(ctx context.Context, req *types.CompletionRequest) (*types.CompletionResponse, error) {
-	resp, err := c.client.CreateChatCompletion(
+	resp, err := c.client.CreateCompletion(
 		ctx,
-		openai.ChatCompletionRequest{
-			Model: req.Model,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: req.Message,
-				},
-			},
+		openai.CompletionRequest{
+			Model:       req.Model,
+			Prompt:      req.Message + "->",
+			Temperature: 0,
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &types.CompletionResponse{Message: resp.Choices[0].Message.Content}, nil
+	return &types.CompletionResponse{Message: resp.Choices[0].Text}, nil
 }
