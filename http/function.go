@@ -72,7 +72,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("received: %+v", event)
 
 	// ignore events that are not message events
-	if event.Type != "event_callback" || event.Event.Type != "message" {
+	if event.Type != "event_callback" || event.Event.Type != "app_mention" {
 		log.Printf("ignoring event type: %s", event.Type)
 		return
 	}
