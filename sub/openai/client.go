@@ -5,7 +5,7 @@ import (
 
 	"github.com/sashabaranov/go-openai"
 
-	"github.com/burstsms/hack-making-it-known/types"
+	"github.com/burstsms/hack-making-it-known/sub/types"
 )
 
 type Client struct {
