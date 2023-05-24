@@ -66,7 +66,10 @@ func askOpenAI(event types.SlackMessageEvent) {
 		model = modelEnv
 	}
 	log.Println("model: " + model)
-	completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text, Model: model})
+	completion, err := oaiClient.CreateChatCompletion(
+		context.Background(),
+		&types.CompletionRequest{Message: event.Event.Text, Model: model},
+	)
 	if err != nil {
 		log.Printf("error calling OpenAI API: %s", err.Error())
 		return

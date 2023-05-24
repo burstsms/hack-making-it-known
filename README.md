@@ -41,6 +41,7 @@ Running locally you need:
 The following environment variables are required to run the bot locally or in cloud function.
 - OPENAI_API_KEY: the OpenAI API key
 - SLACK_BOT_TOKEN: the Slack bot token
+- OPENAI_MODEL: the OpenAI model to use
 
 ## Deployment
 
