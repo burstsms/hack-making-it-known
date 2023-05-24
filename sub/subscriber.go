@@ -3,6 +3,7 @@ package sub
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -52,8 +53,10 @@ func handler(ctx context.Context, e event.Event) error {
 		name = "World"
 	}
 	log.Printf("Hello, %s!", name)
-	event := types.SlackMessageEvent{}
-	askOpenAI(event)
+	slackEvent := types.SlackMessageEvent{}
+	json.Unmarshal(msg.Message.Data, &slackEvent)
+
+	askOpenAI(slackEvent)
 	return nil
 }
 
