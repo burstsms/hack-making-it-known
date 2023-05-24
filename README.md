@@ -31,6 +31,7 @@ The following environment variables are required to run the bot locally or in cl
 - CLOUD_PROJECT_ID:
   - Used to specify the Cloud Project ID
   - Defaults to `tmp-hack-no-team-name`
+
 Running locally you need:
 - FUNCTION_TARGET: 
   - Used to specify the registered entrypoint name
