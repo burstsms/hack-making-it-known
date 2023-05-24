@@ -5,14 +5,24 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/slack-go/slack"
 
+	"github.com/burstsms/hack-making-it-known/sub/openai"
 	"github.com/burstsms/hack-making-it-known/sub/types"
 )
 
+type OaiClient interface {
+	CreateChatCompletion(ctx context.Context, req *types.CompletionRequest) (*types.CompletionResponse, error)
+}
+
+var oaiClient OaiClient
+
 func init() {
+	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 	functions.CloudEvent("HelloPubSub", handler)
 }
 
@@ -42,14 +52,10 @@ func handler(ctx context.Context, e event.Event) error {
 		name = "World"
 	}
 	log.Printf("Hello, %s!", name)
+	event := types.SlackMessageEvent{}
+	askOpenAI(event)
 	return nil
 }
-
-type OaiClient interface {
-	CreateChatCompletion(ctx context.Context, req *types.CompletionRequest) (*types.CompletionResponse, error)
-}
-
-var oaiClient OaiClient
 
 // AskOpenAI is triggered by an event it is subscribed to and sends the received message in the event to OpenAI and then sends the completion to slack\ .
 // func AskOpenAI(ctx context.Context, event v2.Event) error {
@@ -73,7 +79,7 @@ var oaiClient OaiClient
 
 func askOpenAI(event types.SlackMessageEvent) {
 	log.Printf("message: %s", event.Event.Text)
-	completion, err := client.CreateChatCompletion(context.Background(), &openai.CompletionRequest{Message: event.Event.Text})
+	completion, err := oaiClient.CreateChatCompletion(context.Background(), &openai.CompletionRequest{Message: event.Event.Text})
 	if err != nil {
 		log.Printf("error calling OpenAI API: %s", err.Error())
 		return
