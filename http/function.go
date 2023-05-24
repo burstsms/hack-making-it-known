@@ -7,13 +7,12 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 
+	"cloud.google.com/go/pubsub"
 	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 
-	"github.com/burstsms/hack-making-it-known/openai"
 	"github.com/burstsms/hack-making-it-known/slack"
 	"github.com/burstsms/hack-making-it-known/types"
 )
@@ -25,16 +24,12 @@ type OaiClient interface {
 	CreateChatCompletion(ctx context.Context, req *types.CompletionRequest) (*types.CompletionResponse, error)
 }
 
-var oaiClient OaiClient
-
-var slackClient SlackClient
+const topicName = "hack-slack-bridge"
+const projectID = "tmp-hack-no-team-name"
 
 func init() {
 	log.Println("init")
 	functions.HTTP("MakeItKnown", Handler)
-
-	oaiClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
-	slackClient = slack.New(os.Getenv("SLACK_BOT_TOKEN"))
 }
 
 // Handler sends the received message to OpenAI and returns the response.
@@ -74,22 +69,49 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// we pass off the message for the OpenAI API to a go routine here
-	AskOpenAI(event)
+	// we pass off the message to OpenAI
+	err = AskOpenAI(event)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
 }
 
-func AskOpenAI(event types.SlackMessageEvent) {
-	log.Printf("message: %s", event.Event.Text)
-	completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text})
+// AskOpenAI publishes the slack event to our make-it-known cloud function subscriber who will do the OpenAI asking
+// and giving the completion back to slack.
+func AskOpenAI(event types.SlackMessageEvent) error {
+	log.Printf("asking: %s", event.Event.Text)
+
+	// Set up the Google Cloud Pub/Sub client
+	ctx := context.Background()
+	client, err := pubsub.NewClient(ctx, projectID)
 	if err != nil {
-		log.Printf("error calling OpenAI API: %s", err.Error())
-		return
+		log.Fatalf("Failed to create Pub/Sub client: %v", err)
+		return err
 	}
-	log.Println(completion.Message)
-	// send completion to Slack
-	err = slackClient.PostCompletionMessage(event, completion.Message)
+
+	// Get a reference to the topic
+	topic := client.Topic(topicName)
+
+	// encode the Slack event message into json
+	eventJson, err := json.Marshal(event)
 	if err != nil {
-		log.Printf("error posting completion to Slack: %s", err.Error())
+		log.Printf("Failed to marshal event: %v", err)
+		return err
 	}
+
+	// Publish the Slack event message to the topic
+	result := topic.Publish(ctx, &pubsub.Message{Data: eventJson})
+
+	// Get the server-generated message ID
+	msgID, err := result.Get(ctx)
+	if err != nil {
+		log.Printf("Failed to publish message: %v", err)
+		return err
+	}
+
+	log.Printf("Published a message; msg ID: %v\n", msgID)
+
+	return nil
 }

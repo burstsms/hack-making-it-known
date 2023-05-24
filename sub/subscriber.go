@@ -31,6 +31,18 @@ var oaiClient OaiClient
 // AskOpenAI is triggered by an event it is subscribed to and sends the received message in the event to OpenAI and then sends the completion to slack\ .
 func AskOpenAI(ctx context.Context, event v2.Event) error {
 
+	// completion, err := oaiClient.CreateChatCompletion(context.Background(), &types.CompletionRequest{Message: event.Event.Text})
+	// if err != nil {
+	//     log.Printf("error calling OpenAI API: %s", err.Error())
+	//     return
+	// }
+	// log.Println(completion.Message)
+	// // send completion to Slack
+	// err = slackClient.PostCompletionMessage(event, completion.Message)
+	// if err != nil {
+	//     log.Printf("error posting completion to Slack: %s", err.Error())
+	// }
+
 	return nil
 }
 
