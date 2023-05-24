@@ -27,10 +27,14 @@ The following environment variables are required to run the bot locally or in cl
   - if omitted the slack event receiver will not verify the request came from Slack
 - CLOUD_PUB_SUB_TOPIC:
   - Used to specify the Cloud PubSub event topic
-  - Defaults to `hack-slack-bridge`_
+  - Defaults to `hack-slack-bridge`
 - CLOUD_PROJECT_ID:
   - Used to specify the Cloud Project ID
-  - Defaults to `tmp-hack-no-team-name`_
+  - Defaults to `tmp-hack-no-team-name`
+Running locally you need:
+- FUNCTION_TARGET: 
+  - Used to specify the registered entrypoint name
+  - Needs to be `MakeItKnown` 
 
 ## PubSub Environment Variables
 The following environment variables are required to run the bot locally or in cloud function.
