@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	_ "github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
-
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 
 	"github.com/burstsms/hack-making-it-known/publisher"
@@ -32,12 +31,17 @@ func init() {
 
 // Handler sends the received message to OpenAI and returns the response.
 func Handler(w http.ResponseWriter, r *http.Request) {
-
+	log.Println("http handler received request")
 	ctx := r.Context()
 
 	// request body needs to be a byte array
 	// so we can use it in multiple places
 	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Println(err.Error())
+		return
+	}
 
 	// is this a URL verification request?
 	// returns true if it is and we finish here
