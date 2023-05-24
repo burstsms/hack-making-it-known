@@ -36,9 +36,10 @@ Running locally you need:
   - Used to specify the registered entrypoint name
   - Needs to be `MakeItKnown` 
 
-## PubSub Environment Variables
+## PubSub Subscriber Environment Variables
 The following environment variables are required to run the bot locally or in cloud function.
 - OPENAI_API_KEY: the OpenAI API key
+- SLACK_BOT_TOKEN: the Slack bot token
 
 ## Deployment
 
