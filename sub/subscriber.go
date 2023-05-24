@@ -48,11 +48,8 @@ func handler(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("event.DataAs: %v", err)
 	}
 
-	name := string(msg.Message.Data) // Automatically decoded from base64.
-	if name == "" {
-		name = "World"
-	}
-	log.Printf("Hello, %s!", name)
+	payload := string(msg.Message.Data) // Automatically decoded from base64.
+	log.Printf("Payload: %s", payload)
 	slackEvent := types.SlackMessageEvent{}
 	json.Unmarshal(msg.Message.Data, &slackEvent)
 
@@ -70,7 +67,7 @@ func askOpenAI(event types.SlackMessageEvent) {
 	log.Println(completion.Message)
 	// send completion to Slack
 	api := slack.New(os.Getenv("SLACK_BOT_TOKEN"))
-	_, _, err = api.PostMessage(event.Event.Channel, slack.MsgOptionText(completion.Message, false))
+	_, _, err = api.PostMessage(event.Event.Channel, slack.MsgOptionText(completion.Message, false), slack.MsgOptionTS(event.Event.Ts))
 	if err != nil {
 		log.Printf("error sending message to Slack: %s", err.Error())
 		return
